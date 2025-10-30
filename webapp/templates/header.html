@@ -1,0 +1,74 @@
+<div class="admin-header">
+    <h1 class="admin-title text-center">{{ page_title }}</h1>
+</div>
+
+<div class="nav-buttons">
+    <div class="buttons-grid">
+        <a href="/?token={{ token }}" class="nav-btn" {% if active_page == 'registration' %}style="background: #28a745; color: white;"{% endif %}>Заявки на реєстрацію</a>
+        <a href="/cities?token={{ token }}" class="nav-btn" {% if active_page == 'cities' %}style="background: #28a745; color: white;"{% endif %}>Города</a>
+        <a href="/order-tips?token={{ token }}" class="nav-btn" {% if active_page == 'order-tips' %}style="background: #28a745; color: white;"{% endif %}>Советы по заказам</a>
+        <a href="/assign-order?token={{ token }}" class="nav-btn" {% if active_page == 'assign-order' %}style="background: #28a745; color: white;"{% endif %}>Назначить заказ</a>
+        <a href="/statements?token={{ token }}" class="nav-btn" {% if active_page == 'statements' %}style="background: #28a745; color: white;"{% endif %}>Выписки</a>
+        <a href="/users-database?token={{ token }}" class="nav-btn" {% if active_page == 'users-database' %}style="background: #28a745; color: white;"{% endif %}>База данных пользователей по городам</a>
+        <a href="/expenses?token={{ token }}" class="nav-btn" {% if active_page == 'expenses' %}style="background: #28a745; color: white;"{% endif %}>Расходы</a>
+    </div>
+</div>
+
+<style>
+    .admin-header {
+        background: var(--tg-secondary);
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        border: 1px solid var(--tg-border);
+    }
+
+    .admin-title {
+        color: var(--tg-primary);
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .nav-buttons {
+        background: var(--tg-secondary);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        border: 1px solid var(--tg-border);
+    }
+
+    .nav-btn {
+        background: #e8d944;
+        color: #2c2c2c;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        margin: 0.3rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-btn:hover {
+        background: #d4c43a;
+        color: #1a1a1a;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .nav-btn:active {
+        transform: translateY(0);
+    }
+
+    .buttons-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: center;
+    }
+</style>

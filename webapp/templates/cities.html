@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Города - Vapeshop Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --tg-primary: #0088cc;
+            --tg-secondary: #ffffff;
+            --tg-accent: #2481cc;
+            --tg-success: #00c853;
+            --tg-danger: #f44336;
+            --tg-warning: #ff9800;
+            --tg-dark: #212121;
+            --tg-light: #f5f5f5;
+            --tg-border: #e0e0e0;
+            --tg-bg: #fafafa;
+        }
+
+        body {
+            background: var(--tg-bg);
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: var(--tg-dark);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .admin-container {
+            flex: 1;
+            padding: 2rem 0;
+        }
+
+        .admin-header {
+            background: var(--tg-secondary);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--tg-border);
+        }
+
+        .admin-title {
+            color: var(--tg-primary);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .content-card {
+            background: var(--tg-secondary);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--tg-border);
+        }
+
+        .city-btn {
+            background: #e8d944;
+            color: #2c2c2c;
+            border: 2px solid #2c2c2c;
+            padding: 0.8rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin: 0.5rem;
+            min-width: 180px;
+            text-align: center;
+        }
+
+        .city-btn:hover {
+            background: #d4c43a;
+            transform: translateY(-2px);
+        }
+
+        .city-btn.active {
+            background: var(--tg-secondary);
+            color: #2c2c2c;
+        }
+
+        .cities-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: flex-start;
+            margin-bottom: 2rem;
+        }
+
+        .products-section {
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .products-section.show {
+            display: block;
+        }
+
+        .search-bar {
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.8rem 1.5rem;
+            width: 400px;
+            font-size: 1rem;
+        }
+
+        .search-bar::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            align-items: center;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-delete:hover {
+            background: #c82333;
+        }
+
+        .btn-delete:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .btn-add {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-add:hover {
+            background: #218838;
+        }
+
+        .btn-edit {
+            background: #ff9800;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-edit:hover {
+            background: #e68900;
+        }
+
+        .btn-edit:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .products-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .products-table thead {
+            background: #6c757d;
+            color: white;
+        }
+
+        .products-table th,
+        .products-table td {
+            padding: 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .products-table tbody tr {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .products-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .products-table tbody tr.selected {
+            background: #d4c43a !important;
+            font-weight: 600;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--tg-primary);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--tg-dark);
+        }
+
+        .form-label.required:after {
+            content: " *";
+            color: #dc3545;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.6rem;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--tg-primary);
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            justify-content: flex-end;
+        }
+
+        .btn-cancel {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-save {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .nav-buttons {
+            background: var(--tg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--tg-border);
+        }
+
+        .nav-btn {
+            background: #e8d944;
+            color: #2c2c2c;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0.3rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-btn:hover {
+            background: #d4c43a;
+            color: #1a1a1a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .nav-btn:active {
+            transform: translateY(0);
+        }
+
+        .buttons-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container admin-container">
+        {% include 'header.html' %}
+
+        <div class="content-card">
+            <div class="cities-grid" id="citiesGrid">
+                <!-- Міста завантажуються динамічно -->
+            </div>
+
+            <div class="products-section" id="productsSection">
+                <div class="action-buttons">
+                    <input type="text" class="search-bar" id="searchBar" placeholder="Поиск товара по имени или коду">
+                    <button class="btn-delete" id="deleteBtn" onclick="deleteSelectedProduct()" disabled>Удалить товар</button>
+                    <button class="btn-edit" id="editBtn" onclick="showEditProductModal()" disabled>Редактировать</button>
+                    <button class="btn-add" onclick="showAddProductModal()">Добавить товар</button>
+                </div>
+
+                <table class="products-table">
+                    <thead>
+                        <tr>
+                            <th>Код</th>
+                            <th>Название</th>
+                            <th>Вкус</th>
+                            <th>Цена покупки</th>
+                            <th>Количество</th>
+                            <th>Цена продажи</th>
+                            <th>Продано</th>
+                            <th>Остаток</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productsTableBody">
+                        <!-- Товари завантажуються динамічно -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальне вікно додавання товару -->
+    <div class="modal" id="addProductModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Добавить товар</h2>
+            </div>
+            <form id="addProductForm">
+                <div class="form-group">
+                    <label class="form-label required">Код товара</label>
+                    <input type="text" class="form-control" name="code" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label required">Название</label>
+                    <input type="text" class="form-control" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label required">Вкус</label>
+                    <input type="text" class="form-control" name="flavor" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label required">Цена покупки (€)</label>
+                    <input type="number" step="0.01" class="form-control" name="purchase_price" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label required">Количество (шт)</label>
+                    <input type="number" class="form-control" name="purchase_quantity" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label required">Цена продажи (€)</label>
+                    <input type="number" step="0.01" class="form-control" name="sale_price" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeModal('addProductModal')">Отмена</button>
+                    <button type="submit" class="btn-save">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Модальне вікно редагування товару -->
+    <div class="modal" id="editProductModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Редактировать товар</h2>
+            </div>
+            <form id="editProductForm">
+                <input type="hidden" name="product_id">
+                <div class="form-group">
+                    <label class="form-label required">Код товара</label>
+                    <input type="text" class="form-control" name="code" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label required">Название</label>
+                    <input type="text" class="form-control" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label required">Вкус</label>
+                    <input type="text" class="form-control" name="flavor" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label required">Цена покупки (€)</label>
+                    <input type="number" step="0.01" class="form-control" name="purchase_price" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label required">Количество закупки (шт)</label>
+                    <input type="number" class="form-control" name="purchase_quantity" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label required">Цена продажи (€)</label>
+                    <input type="number" step="0.01" class="form-control" name="sale_price" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label required">Продано (шт)</label>
+                    <input type="number" class="form-control" name="sold_quantity" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label required">Остаток (шт)</label>
+                    <input type="number" class="form-control" name="stock" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeModal('editProductModal')">Отмена</button>
+                    <button type="submit" class="btn-save">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentCityId = null;
+        let selectedProductId = null;
+        let selectedProductData = null;
+        const token = "{{ token }}";
+
+        // Завантаження міст
+        async function loadCities() {
+            try {
+                const response = await fetch(`/api/cities?token=${token}`);
+                const cities = await response.json();
+                
+                const grid = document.getElementById('citiesGrid');
+                grid.innerHTML = cities.map(city => 
+                    `<button class="city-btn" data-city-id="${city.id}" onclick="selectCity(${city.id}, '${city.name}', this)">${city.name}</button>`
+                ).join('');
+            } catch (error) {
+                console.error('Помилка завантаження міст:', error);
+            }
+        }
+
+        // Вибір міста
+        async function selectCity(cityId, cityName, button) {
+            currentCityId = cityId;
+            selectedProductId = null;
+            selectedProductData = null;
+            
+            document.querySelectorAll('.city-btn').forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            
+            document.getElementById('productsSection').classList.add('show');
+            updateButtons();
+            await loadProducts(cityId);
+        }
+
+        // Завантаження товарів
+        async function loadProducts(cityId, search = '') {
+            try {
+                const response = await fetch(`/api/cities/${cityId}/products?token=${token}&search=${search}`);
+                const products = await response.json();
+                
+                const tbody = document.getElementById('productsTableBody');
+                tbody.innerHTML = products.map(p => `
+                    <tr onclick="selectProduct(${p.id}, ${JSON.stringify(p).replace(/"/g, '&quot;')})" data-product-id="${p.id}">
+                        <td>${p.code}</td>
+                        <td>${p.name}</td>
+                        <td>${p.flavor || '-'}</td>
+                        <td>${p.purchase_price}€</td>
+                        <td>${p.purchase_quantity} шт</td>
+                        <td>${p.sale_price}€</td>
+                        <td>${p.sold_quantity} шт</td>
+                        <td>${p.stock} шт</td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Помилка завантаження товарів:', error);
+            }
+        }
+
+        // Вибір товару
+        function selectProduct(productId, productData) {
+            selectedProductId = productId;
+            selectedProductData = productData;
+            
+            document.querySelectorAll('.products-table tbody tr').forEach(tr => {
+                tr.classList.remove('selected');
+            });
+            
+            const selectedRow = document.querySelector(`tr[data-product-id="${productId}"]`);
+            if (selectedRow) {
+                selectedRow.classList.add('selected');
+            }
+            
+            updateButtons();
+        }
+
+        // Оновлення стану кнопок
+        function updateButtons() {
+            const deleteBtn = document.getElementById('deleteBtn');
+            const editBtn = document.getElementById('editBtn');
+            
+            if (selectedProductId) {
+                deleteBtn.disabled = false;
+                editBtn.disabled = false;
+            } else {
+                deleteBtn.disabled = true;
+                editBtn.disabled = true;
+            }
+        }
+
+        // Видалення вибраного товару
+        async function deleteSelectedProduct() {
+            if (!selectedProductId) {
+                alert('Выберите товар для удаления');
+                return;
+            }
+            
+            if (!confirm('Удалить этот товар?')) return;
+            
+            try {
+                const response = await fetch(`/api/products/${selectedProductId}?token=${token}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    selectedProductId = null;
+                    selectedProductData = null;
+                    updateButtons();
+                    await loadProducts(currentCityId);
+                    alert('Товар удален!');
+                } else {
+                    alert('Ошибка при удалении');
+                }
+            } catch (error) {
+                alert('Ошибка: ' + error.message);
+            }
+        }
+
+        // Показати модальне вікно додавання
+        function showAddProductModal() {
+            if (!currentCityId) {
+                alert('Сначала выберите город');
+                return;
+            }
+            document.getElementById('addProductModal').classList.add('show');
+        }
+
+        // Показати модальне вікно редагування
+        function showEditProductModal() {
+            if (!selectedProductId || !selectedProductData) {
+                alert('Выберите товар для редактирования');
+                return;
+            }
+            
+            const form = document.getElementById('editProductForm');
+            form.product_id.value = selectedProductId;
+            form.code.value = selectedProductData.code;
+            form.name.value = selectedProductData.name;
+            form.flavor.value = selectedProductData.flavor || '';
+            form.purchase_price.value = selectedProductData.purchase_price;
+            form.purchase_quantity.value = selectedProductData.purchase_quantity;
+            form.sale_price.value = selectedProductData.sale_price;
+            form.sold_quantity.value = selectedProductData.sold_quantity;
+            form.stock.value = selectedProductData.stock;
+            
+            document.getElementById('editProductModal').classList.add('show');
+        }
+
+        // Закрити модальне вікно
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        // Обробка форми додавання
+        document.getElementById('addProductForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = {
+                code: formData.get('code'),
+                name: formData.get('name'),
+                flavor: formData.get('flavor'),
+                purchase_price: parseFloat(formData.get('purchase_price')),
+                purchase_quantity: parseInt(formData.get('purchase_quantity')),
+                sale_price: parseFloat(formData.get('sale_price')),
+                city_id: currentCityId
+            };
+            
+            try {
+                const response = await fetch(`/api/products?token=${token}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    closeModal('addProductModal');
+                    e.target.reset();
+                    await loadProducts(currentCityId);
+                    alert('Товар добавлен!');
+                } else {
+                    alert('Ошибка при добавлении');
+                }
+            } catch (error) {
+                alert('Ошибка: ' + error.message);
+            }
+        });
+
+        // Обробка форми редагування
+        document.getElementById('editProductForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const productId = formData.get('product_id');
+            const data = {
+                code: formData.get('code'),
+                name: formData.get('name'),
+                flavor: formData.get('flavor'),
+                purchase_price: parseFloat(formData.get('purchase_price')),
+                purchase_quantity: parseInt(formData.get('purchase_quantity')),
+                sale_price: parseFloat(formData.get('sale_price')),
+                sold_quantity: parseInt(formData.get('sold_quantity')),
+                stock: parseInt(formData.get('stock'))
+            };
+            
+            try {
+                const response = await fetch(`/api/products/${productId}?token=${token}`, {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    closeModal('editProductModal');
+                    selectedProductId = null;
+                    selectedProductData = null;
+                    updateButtons();
+                    await loadProducts(currentCityId);
+                    alert('Товар обновлен!');
+                } else {
+                    alert('Ошибка при обновлении');
+                }
+            } catch (error) {
+                alert('Ошибка: ' + error.message);
+            }
+        });
+
+        // Пошук
+        document.getElementById('searchBar').addEventListener('input', (e) => {
+            if (currentCityId) {
+                loadProducts(currentCityId, e.target.value);
+            }
+        });
+
+        // Закриття модального вікна по кліку поза ним
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('show');
+            }
+        });
+
+        // Ініціалізація
+        loadCities();
+    </script>
+</body>
+</html>

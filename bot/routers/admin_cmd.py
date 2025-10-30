@@ -43,5 +43,6 @@ async def admin_enter(message: Message, session: AsyncSession):
         f'<a href="{url}">🔗 Vapeshop Admin Panel</a>\n\n'
         f"⏱️ Токен дійсний протягом 2 годин\n"
         f"🔒 Посилання персональне та захищене",
+        parse_mode="HTML",
         disable_web_page_preview=False
     )
